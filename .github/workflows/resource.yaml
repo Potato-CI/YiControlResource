@@ -1,0 +1,48 @@
+name: YiControl Resource GitHub Actions Demo
+run-name: ${{ github.actor }} is Resource out GitHub Actions 🚀
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: self-hosted
+    container:
+      image: rainbow12/lv_img:2.0.3
+    steps:
+    - name: pull file
+      env:
+        FTP_USER: ${{ secrets.FTP_USER }}
+        FTP_PASS: ${{ secrets.FTP_PASS }}
+        FTP_HOST: ${{ secrets.FTP_HOST }}
+      run: wget -r -nH --cut-dirs=3 -P /usr/src/image/ ftp://$FTP_USER:$FTP_PASS@$FTP_HOST/AiYiJan/YiControlStatic/png/
+    - name: edit file
+      env:
+        FTP_USER: ${{ secrets.FTP_USER }}
+        FTP_PASS: ${{ secrets.FTP_PASS }}
+        FTP_HOST: ${{ secrets.FTP_HOST }}
+      run: wget -r -nH --cut-dirs=3 -P /usr/src/image/ ftp://$FTP_USER:$FTP_PASS@$FTP_HOST/AiYiJan/YiControlStatic/png_edit/
+    - name: build env
+      env:
+        FTP_USER: ${{ secrets.FTP_USER }}
+        FTP_PASS: ${{ secrets.FTP_PASS }}
+        FTP_HOST: ${{ secrets.FTP_HOST }}
+      run: wget -r -nH --cut-dirs=3 -P /usr/src/assets/ ftp://$FTP_USER:$FTP_PASS@$FTP_HOST/AiYiJan/YiControlStatic/assets/
+    - name: build file
+      run: |
+        cd /usr/src/app
+        bash ./start.sh
+        python3 tools/pack_resources.py -i /usr/src/assets -o /usr/src/bin/resources.bin
+    - name: upload file
+      env:
+        FTP_USER: ${{ secrets.FTP_USER }}
+        FTP_PASS: ${{ secrets.FTP_PASS }}
+        FTP_HOST: ${{ secrets.FTP_HOST }}
+      run: |
+        cd /usr/src
+        mkdir -p tmp
+        cp -r ./image ./tmp
+        cp -r ./bin ./tmp
+        mv ./tmp ./Static_$(date +%Y%m%d_%H%M)
+        python3 ./app/upfile.py 

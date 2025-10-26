@@ -9,7 +9,7 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: self-hosted
     container:
-      image: rainbow12/lv_img:2.0.3
+      image: rainbow12/lv_img:2.0.4
     steps:
     - name: pull file
       env:
